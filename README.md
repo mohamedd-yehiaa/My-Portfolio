@@ -51,7 +51,7 @@ portfolio/
 
 If you're interested in collaborating on a project or just want to say hi, feel free to reach out:
 
-- **LinkedIn:** [Mohamed Yehia](www.linkedin.com/in/mohamedd-yehiaa)
+- **LinkedIn:** [Mohamed Yehia](https://www.linkedin.com/in/mohamedd-yehiaa)
 - **GitHub:** [@mohamedd-yehiaa](https://github.com/mohamedd-yehiaa)
 - **Email:** mohamedyehiaali4@gmail.com
 

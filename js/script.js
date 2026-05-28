@@ -51,7 +51,7 @@
 
   function handleHeaderScroll() {
     const currentScroll = window.scrollY;
-    header.classList.toggle("header--scrolled", currentScroll > 50);
+    header.classList.toggle("header--scrolled", currentScroll > 0);
 
     if (currentScroll > lastScroll && currentScroll > 400) {
       header.classList.add("header--hidden");
@@ -161,10 +161,10 @@
   );
 
   statNumbers.forEach(function (num) {
-    // Dynamic counting
-    const selector = num.getAttribute("data-target-selector");
+    // Dynamically count matching DOM elements if a selector is provided
+    var selector = num.getAttribute("data-target-selector");
     if (selector) {
-      const elements = document.querySelectorAll(selector);
+      var elements = document.querySelectorAll(selector);
       num.setAttribute("data-count", elements.length);
     }
     statObserver.observe(num);
@@ -186,5 +186,66 @@
         window.scrollTo({ top: top, behavior: "smooth" });
       }
     });
+  });
+
+  /* ═════════════════════════════════════════
+     8. EXPANDABLE SECTIONS (Projects & Certs)
+     ═════════════════════════════════════════ */
+  function initExpandableSection(config) {
+    var grid = document.getElementById(config.gridId);
+    var btn = document.getElementById(config.btnId);
+    var wrapper = document.getElementById(config.wrapperId);
+    if (!grid || !btn || !wrapper) return;
+
+    var items = grid.querySelectorAll(config.itemSelector);
+    // If the total item count doesn't exceed the limit, hide the button
+    if (items.length <= config.maxVisible) {
+      wrapper.classList.add("section__expand-wrapper--hidden");
+      grid.classList.remove(config.collapsedClass);
+      return;
+    }
+
+    btn.addEventListener("click", function () {
+      var isCollapsed = grid.classList.contains(config.collapsedClass);
+      if (isCollapsed) {
+        grid.classList.remove(config.collapsedClass);
+        btn.setAttribute("aria-expanded", "true");
+        // Trigger reveal animation on newly visible items
+        var hiddenItems = Array.prototype.slice.call(items, config.maxVisible);
+        hiddenItems.forEach(function (item, i) {
+          if (
+            item.classList.contains("reveal") &&
+            !item.classList.contains("revealed")
+          ) {
+            setTimeout(function () {
+              item.classList.add("revealed");
+            }, i * 80);
+          }
+        });
+      } else {
+        grid.classList.add(config.collapsedClass);
+        btn.setAttribute("aria-expanded", "false");
+        // Scroll grid top into view so user isn't left stranded
+        grid.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+
+  initExpandableSection({
+    gridId: "projectsGrid",
+    btnId: "projectsExpandBtn",
+    wrapperId: "projectsExpandWrapper",
+    itemSelector: ".project-card",
+    maxVisible: 3,
+    collapsedClass: "projects__grid--collapsed",
+  });
+
+  initExpandableSection({
+    gridId: "certificationsGrid",
+    btnId: "certificationsExpandBtn",
+    wrapperId: "certificationsExpandWrapper",
+    itemSelector: ".cert-card",
+    maxVisible: 6,
+    collapsedClass: "certifications__grid--collapsed",
   });
 })();

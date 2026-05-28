@@ -274,8 +274,10 @@ textarea {
   width: 100%;
   height: var(--header-height);
   z-index: 1000;
-  transition: all var(--transition-base);
-  background: transparent;
+   transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+   background: transparent;
 }
 
 .header--scrolled {
@@ -621,6 +623,14 @@ textarea {
   border: 2px solid var(--accent);
   opacity: 0.2;
   z-index: 0;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+/* Triggers the glow when hovering anywhere on the photo */
+.about__image-wrapper:hover .about__image-decor,
+.about__image-wrapper:active .about__image-decor{
+  opacity: 0.7; /* Brightens the accent line */
+  filter: drop-shadow(0 0 15px var(--accent));  /*Casts the soft glowing light */
 }
 
 .about__content {
@@ -651,27 +661,28 @@ textarea {
 .about__stat {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .about__stat-number {
   font-family: "Poppins", sans-serif;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 700;
   color: var(--accent);
-  line-height: 1.1;
+  line-height: 1;
+  margin-bottom: 6px;
 }
-
-.about__stat-plus {
-  font-family: "Poppins", sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--accent);
+/* This targets ONLY the number of YOE*/
+.about__stat:last-child .about__stat-number::after {
+  content: " +";
 }
 
 .about__stat-label {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   color: var(--text-muted);
-  margin-top: 4px;
+  letter-spacing: 0.02em;
 }
 
 /* ─────────────────────────────────────────────
@@ -1221,6 +1232,62 @@ textarea {
 
 .cert-card__link:hover svg {
   transform: translate(2px, -2px);
+}
+
+/* ─────────────────────────────────────────────
+   11c. COLLAPSIBLE GRIDS & EXPAND BUTTONS
+   ───────────────────────────────────────────── */
+
+/* Projects: show max 3 items when collapsed */
+.projects__grid--collapsed .project-card:nth-child(n + 4) {
+  display: none;
+}
+
+/* Certifications: show max 6 items when collapsed */
+.certifications__grid--collapsed .cert-card:nth-child(n + 7) {
+  display: none;
+}
+
+/* Expand button wrapper */
+.section__expand-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* Hide the button entirely when nothing is collapsed */
+.section__expand-wrapper--hidden {
+  display: none;
+}
+
+/* Expand button styling */
+.section__expand-btn {
+  gap: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 14px 32px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+  transition: all var(--transition-base);
+}
+
+.section__expand-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--accent-glow);
+}
+
+.section__expand-btn svg {
+  transition: transform var(--transition-base);
+  flex-shrink: 0;
+}
+
+.section__expand-btn[aria-expanded="true"] svg {
+  transform: rotate(180deg);
 }
 
 .contact {

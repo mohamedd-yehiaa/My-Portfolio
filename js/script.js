@@ -198,6 +198,8 @@
     if (!grid || !btn || !wrapper) return;
 
     var items = grid.querySelectorAll(config.itemSelector);
+    var chevron = btn.querySelector("svg");
+
     // If the total item count doesn't exceed the limit, hide the button
     if (items.length <= config.maxVisible) {
       wrapper.classList.add("section__expand-wrapper--hidden");
@@ -205,11 +207,32 @@
       return;
     }
 
+    // Helper to update button text + chevron direction
+    function updateButtonState(expanded) {
+      // Update the text node (first child text before the SVG)
+      var textNode = btn.firstChild;
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        textNode.textContent = expanded
+          ? config.expandedText + " "
+          : config.collapsedText + " ";
+      }
+
+      // Rotate the entire SVG chevron instead of changing its internal points
+      if (chevron) {
+        // Adds a smooth turning animation
+        chevron.style.transition = "transform 0.3s ease";
+
+        // Rotate 180deg when expanded, back to 0deg when collapsed
+        chevron.style.transform = expanded ? "rotate(180deg)" : "rotate(0deg)";
+      }
+    }
+
     btn.addEventListener("click", function () {
       var isCollapsed = grid.classList.contains(config.collapsedClass);
       if (isCollapsed) {
         grid.classList.remove(config.collapsedClass);
         btn.setAttribute("aria-expanded", "true");
+        updateButtonState(true);
         // Trigger reveal animation on newly visible items
         var hiddenItems = Array.prototype.slice.call(items, config.maxVisible);
         hiddenItems.forEach(function (item, i) {
@@ -225,6 +248,7 @@
       } else {
         grid.classList.add(config.collapsedClass);
         btn.setAttribute("aria-expanded", "false");
+        updateButtonState(false);
         // Scroll grid top into view so user isn't left stranded
         grid.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -238,6 +262,8 @@
     itemSelector: ".project-card",
     maxVisible: 3,
     collapsedClass: "projects__grid--collapsed",
+    collapsedText: "View Full Portfolio",
+    expandedText: "Show Less",
   });
 
   initExpandableSection({
@@ -247,5 +273,62 @@
     itemSelector: ".cert-card",
     maxVisible: 6,
     collapsedClass: "certifications__grid--collapsed",
+    collapsedText: "View All Credentials",
+    expandedText: "Show Less",
   });
+  /* ═════════════════════════════════════════
+     9. CLI LOGO TYPING ANIMATION
+     ═════════════════════════════════════════ */
+  (function initCliTyping() {
+    var cliText = document.getElementById("cliText");
+    var cliLogo = document.getElementById("cliLogo");
+    if (!cliText || !cliLogo) return;
+
+    var phrases = [
+      "Mohamed Yehia",
+      "Software Engineer",
+      "Cloud & DevOps",
+      "CI/CD Automation",
+    ];
+
+
+    var typeSpeed = 70;
+    var eraseSpeed = 40;
+    var pauseAfterType = 2000;
+    var pauseAfterErase = 500;
+
+
+    function sleep(ms) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+      });
+    }
+
+    async function typePhrase(text) {
+      for (var i = 0; i < text.length; i++) {
+        cliText.textContent = text.substring(0, i + 1);
+        await sleep(typeSpeed);
+      }
+    }
+
+    async function erasePhrase(text) {
+      for (var i = text.length; i > 0; i--) {
+        cliText.textContent = text.substring(0, i - 1);
+        await sleep(eraseSpeed);
+      }
+    }
+
+    async function loop() {
+      while (true) {
+        for (var p = 0; p < phrases.length; p++) {
+          await typePhrase(phrases[p]);
+          await sleep(pauseAfterType);
+          await erasePhrase(phrases[p]);
+          await sleep(pauseAfterErase);
+        }
+      }
+    }
+
+    loop();
+  })();
 })();
